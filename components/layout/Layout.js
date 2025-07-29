@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import Header from './Header';
-import Sidebar from './Sidebar';
+import Sidebar from './sidebar';
 import { gsap } from 'gsap';
 import styles from '../../styles/Layout.module.css';
 
@@ -10,13 +10,24 @@ const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    gsap.fromTo('.layout-content', 
-      { opacity: 0, y: 20 }, 
-      { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
-    );
+    // Add null check and ensure DOM is ready
+    const element = document.querySelector('.layout-content');
+    if (element) {
+      gsap.fromTo(element, 
+        { opacity: 0, y: 20 }, 
+        { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
+      );
+    }
   }, []);
 
-  if (!user) return null;
+  // Add loading state instead of returning null immediately
+  if (!user) {
+    return (
+      <div className={styles.loadingContainer}>
+        <div>Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.layout}>
